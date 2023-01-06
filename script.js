@@ -1,65 +1,56 @@
-var hours = [
+var hours = JSON.parse(localStorage.getItem("hours")) || [
     {
         id: "0",
-        hour: "09",
+        hour: "9 AM",
         time: "09",
-        meridiem: "am",
         reminder: ""
     },
     {
         id: "1",
-        hour: "10",
+        hour: "10 AM",
         time: "10",
-        meridiem: "am",
         reminder: ""
     },
     {
         id: "2",
-        hour: "11",
+        hour: "11 AM",
         time: "11",
-        meridiem: "am",
         reminder: ""
     },
     {
         id: "3",
-        hour: "12",
+        hour: "12 PM",
         time: "12",
-        meridiem: "pm",
         reminder: ""
     },
     {
         id: "4",
-        hour: "01",
+        hour: "1 PM",
         time: "13",
-        meridiem: "pm",
         reminder: ""
     },
     {
         id: "5",
-        hour: "02",
+        hour: "2 PM",
         time: "14",
-        meridiem: "pm",
         reminder: ""
     },
     {
         id: "6",
-        hour: "03",
+        hour: "3 PM",
         time: "15",
-        meridiem: "pm",
         reminder: ""
     },
     {
         id: "7",
-        hour: "04",
+        hour: "4 PM",
         time: "16",
-        meridiem: "pm",
         reminder: ""
     },
     {
         id: "8",
-        hour: "05",
+        hour: "5 PM",
         time: "17",
-        meridiem: "pm",
         reminder: ""
     },
     
@@ -73,39 +64,36 @@ function getDate(){
 getDate();
 
 hours.forEach(function(thisHour) {
-    // creates timeblocks row
+    // creates rows for hours
     var hourRow = $("<form>").attr({
         "class": "row"
     });
     $(".container").append(hourRow);
 
-    // creates time field
+    // creates box w time in it
     var hourField = $("<div>")
-        .text((`${thisHour.hour}${thisHour.meridiem}`))
+        .text((`${thisHour.hour}`))
         .attr({
             "class": "col-md-2 hour"
     });
-    var hourPlan = $("<div>")
+    var hourPlan = $("<textarea>")
     .attr({
-        "class": "col-md-9 description p-0"
+        "class": "col-md-5 description p-0"
     });
-var planData = $("<textarea>");
-hourPlan.append(planData);
-planData.attr("id", thisHour.id);
+ //this color codes the hours   
+//var planData = $("<textarea>");
+//hourPlan.append(planData);
+hourPlan.attr("id", thisHour.id);
 if (thisHour.time < dayjs().format("HH")) {
-    planData.attr ({
-        "class": "past", 
-    })
+    hourPlan.addClass ("past")
 } else if (thisHour.time === dayjs().format("HH")) {
-    planData.attr({
+    hourPlan.addClass({
         "class": "present"
     })
 } else if (thisHour.time > dayjs().format("HH")) {
-    planData.attr({
-        "class": "future"
-    })
+    hourPlan.addClass("future")
 }
-var saveButton = $("<i class='far fa-save fa-lg'></i>")
+var saveButton = $("<i class='far fa-save fa-lg'></i>");
 var savePlan = $("<button>")
     .attr({
         "class": "col-md-1 saveBtn"
@@ -114,8 +102,6 @@ savePlan.append(saveButton);
 hourRow.append(hourField, hourPlan, savePlan);
 })
 
-// loads any existing localstorage data after components created
-init();
 
 
 
@@ -127,37 +113,38 @@ $(function () {
   // TODO: Add a listener for click events on the save button. This code should
   // use the id in the containing time-block as a key to save the user input in
   // local storage.
-  $(".saveBtn").on("click", function(event) {
-    event.preventDefault();
-    var saveIndex = $(this).siblings(".description").children(".future").attr("id");
-    hours[saveIndex].reminder = $(this).siblings(".description").children(".future").val();
-    console.log(saveIndex);
-    saveReminders();
-    displayReminders();
+  function displayTask() {
+    console.log(hours)
+    hours.forEach(function (_thisHour) { 
+        console.log(_thisHour.id, _thisHour)
+        $(`#${_thisHour.id}`).val(_thisHour.reminder);
+    })
+}
 
-    function saveReminders() {
+  //saveButton.addEventListener('click', function(event){
+    //in the below line, you had click in ""in the parenthese w function but that was saying save button was undefined
+  $(".saveBtn").click(function(event) {
+    event.preventDefault();
+    
+    var saveIndex = $(this).siblings(".description").attr("id");
+    
+    hours[saveIndex].reminder = $(this).siblings(".description").val();
+    
+
+
+    function saveTask() {
         localStorage.setItem("hours", JSON.stringify(hours));
     }
     
     // sets any data in localStorage to the view
-    function displayReminders() {
-        hours.forEach(function (_thisHour) {
-            $(`#${_thisHour.id}`).val(_thisHour.reminder);
-        })
-    }
     
-    // sets any existing localStorage data to the view if it exists
-    function init() {
-        var storedDay = JSON.parse(localStorage.getItem("hours"));
+    saveTask();
     
-        if (storedDay) {
-            hours = storedDay;
-        }
     
-        saveReminders();
-        displayReminders();
-    }
+   
+
 })
+displayTask();
 
  
   // HINT: What does `this` reference in the click listener
@@ -165,20 +152,8 @@ $(function () {
   // time-block containing the button that was clicked? How might the id be
   // useful when saving the description in local storage?
 
-  //
-  // TODO: Add code to apply the past, present, or future class to each time
-  // block by comparing the id to the current hour. HINTS: How can the id
-  // attribute of each time-block be used to conditionally add or remove the
-  // past, present, and future classes? How can Day.js be used to get the
-  // current hour in 24-hour time?
+ 
 
-
-
-
-    // creates schdeduler data
-  
-
-    // creates save button
   
 
 
